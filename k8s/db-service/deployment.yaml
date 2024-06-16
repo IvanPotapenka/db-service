@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-service-deployment
+  labels:
+    app: db-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db-service
+  template:
+    metadata:
+      labels:
+        app: db-service
+    spec:
+      containers:
+        - name: db-service
+          image: db-service
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8082
+          env:
+            - name: DATABASE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: MONGO_INITDB_DATABASE
+                  name: mongo-configuration
+
+

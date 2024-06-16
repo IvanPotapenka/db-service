@@ -1,0 +1,13 @@
+apiVersion: skaffold/v4beta8
+kind: Config
+metadata:
+  name: db-service
+build:
+  artifacts:
+    - image: db-service
+      docker:
+        dockerfile: Dockerfile
+manifests:
+  rawYaml:
+    - ./k8s/mongoDb/*.yaml
+    - ./k8s/db-service/*.yaml

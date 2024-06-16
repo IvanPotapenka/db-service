@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-set
+spec:
+  serviceName: mongo-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: mongo
+          image: mongo
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 27017
+          envFrom:
+            - configMapRef:
+                name: mongo-configuration
+      restartPolicy: Always
+
+

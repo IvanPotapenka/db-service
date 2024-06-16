@@ -1,0 +1,60 @@
+plugins {
+	id 'java'
+	id 'jacoco'
+	id 'maven-publish'
+	id 'org.springframework.boot' version '3.3.0'
+	id 'io.spring.dependency-management' version '1.1.5'
+}
+
+group = 'by.potapenko'
+version = "$version_project"
+
+java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+	implementation ("org.springframework.boot:spring-boot-starter-data-mongodb",
+	                "org.springframework.boot:spring-boot-starter-validation",
+	                "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openapi_version}",
+			        "org.modelmapper:modelmapper:$modelmaper_version",
+	                "org.springframework.boot:spring-boot-starter-web")
+
+	compileOnly "org.projectlombok:lombok:$lombok_version"
+	annotationProcessor "org.projectlombok:lombok:$lombok_version"
+
+	testImplementation ("org.springframework.boot:spring-boot-starter-test",
+					"org.junit.jupiter:junit-jupiter-api:$junit_version",
+					"org.testcontainers:mongodb:$mongo_test_version",
+			        "org.testcontainers:junit-jupiter:$mongo_test_version",
+	                "org.testcontainers:testcontainers:$mongo_test_version")
+	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+}
+
+
+test {
+	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+	dependsOn test
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+					"com/example/dbservice/DbServiceApplication.java"
+			])
+		}))
+	}
+}
